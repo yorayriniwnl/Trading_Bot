@@ -1,0 +1,12 @@
+# Core dependencies — pinned for reproducibility
+click==8.1.8          # Typer 0.12.3 compatibility; avoids Click 8.2+/8.3 parsing/help regressions
+httpx==0.27.0          # Async-capable HTTP client; direct REST calls to Binance API
+typer==0.12.3          # CLI framework (wraps Click with type hints)
+python-dotenv==1.0.1   # Load .env credentials into os.environ
+rich==13.7.1           # Terminal tables, panels, and colour output
+loguru==0.7.2          # Structured rotating file logging
+streamlit==1.56.0      # Optional web UI for the trading desk
+
+# Testing (optional but encouraged)
+pytest==8.2.0
+pytest-mock==3.14.0

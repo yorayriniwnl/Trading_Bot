@@ -1,0 +1,8 @@
+2026-04-22 15:35:55 | DEBUG    | Logging initialised | file=C:\Users\yoray\Downloads\trading_bot_final\trading_bot\logs\samples\market_order.log
+2026-04-22 15:35:55 | DEBUG    | Fetching exchange metadata | endpoint=/fapi/v1/exchangeInfo
+2026-04-22 15:35:56 | DEBUG    | Fetched exchange metadata | symbols=705
+2026-04-22 15:35:56 | DEBUG    | BinanceClient initialised | base_url=https://testnet.binancefuture.com dry_run=True
+2026-04-22 15:35:56 | INFO     | Placing MARKET order | symbol=BTCUSDT side=BUY qty=0.002
+2026-04-22 15:35:56 | DEBUG    | POST /fapi/v1/order | params={'symbol': 'BTCUSDT', 'side': 'BUY', 'type': 'MARKET', 'quantity': 0.002, 'timestamp': 1776852356709, 'recvWindow': 5000, 'signature': '***REDACTED***'}
+2026-04-22 15:35:56 | DEBUG    | DRY RUN - skipping HTTP call, returning mock response: {'orderId': 0, 'symbol': 'BTCUSDT', 'status': 'DRY_RUN', 'executedQty': '0', 'avgPrice': '0', 'type': 'MARKET', 'side': 'BUY', 'origQty': '0.002', 'price': '0'}
+2026-04-22 15:35:56 | INFO     | MARKET order accepted | orderId=0 status=DRY_RUN

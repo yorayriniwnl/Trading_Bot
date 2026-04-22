@@ -1,0 +1,8 @@
+2026-04-22 15:35:57 | DEBUG    | Logging initialised | file=C:\Users\yoray\Downloads\trading_bot_final\trading_bot\logs\samples\limit_order.log
+2026-04-22 15:35:57 | DEBUG    | Fetching exchange metadata | endpoint=/fapi/v1/exchangeInfo
+2026-04-22 15:35:58 | DEBUG    | Fetched exchange metadata | symbols=705
+2026-04-22 15:35:58 | DEBUG    | BinanceClient initialised | base_url=https://testnet.binancefuture.com dry_run=True
+2026-04-22 15:35:58 | INFO     | Placing LIMIT order | symbol=ETHUSDT side=BUY qty=0.01 price=3000.0 tif=GTC
+2026-04-22 15:35:58 | DEBUG    | POST /fapi/v1/order | params={'symbol': 'ETHUSDT', 'side': 'BUY', 'type': 'LIMIT', 'quantity': 0.01, 'price': 3000.0, 'timeInForce': 'GTC', 'timestamp': 1776852358507, 'recvWindow': 5000, 'signature': '***REDACTED***'}
+2026-04-22 15:35:58 | DEBUG    | DRY RUN - skipping HTTP call, returning mock response: {'orderId': 0, 'symbol': 'ETHUSDT', 'status': 'DRY_RUN', 'executedQty': '0', 'avgPrice': '0', 'type': 'LIMIT', 'side': 'BUY', 'origQty': '0.01', 'price': '3000.0'}
+2026-04-22 15:35:58 | INFO     | LIMIT order accepted | orderId=0 status=DRY_RUN
