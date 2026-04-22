@@ -1,31 +1,58 @@
 """
-validators.py — Pure validation functions with no side effects.
-All functions raise ValueError with descriptive messages on bad input.
+Pure validation helpers with no side effects.
+
+All functions raise ValueError with descriptive messages on invalid input.
 """
 from __future__ import annotations
 
 import re
+from decimal import Decimal, InvalidOperation
 
 VALID_SIDES = {"BUY", "SELL"}
 VALID_ORDER_TYPES = {"MARKET", "LIMIT", "STOP_LIMIT"}
-SYMBOL_PATTERN = re.compile(r"^[A-Z]{2,10}(USDT|BUSD)$")
+VALID_TIME_IN_FORCE = {"FOK", "GTC", "IOC"}
+SYMBOL_BODY_PATTERN = re.compile(r"^[A-Z0-9]+$")
+QUOTE_SUFFIXES = ("USDT", "BUSD")
+
+
+def _parse_positive_number(value: float | str, field_name: str) -> float:
+    try:
+        parsed = Decimal(str(value).strip())
+    except (AttributeError, InvalidOperation, TypeError, ValueError):
+        raise ValueError(f"{field_name} must be a number, got '{value}'.")
+
+    if not parsed.is_finite():
+        raise ValueError(f"{field_name} must be a finite number, got '{value}'.")
+    if parsed <= 0:
+        raise ValueError(f"{field_name} must be positive, got {parsed}.")
+    return float(parsed)
 
 
 def validate_symbol(symbol: str) -> str:
-    """Return normalised symbol or raise ValueError."""
+    """Return a normalised symbol or raise ValueError."""
     if not isinstance(symbol, str) or not symbol.strip():
         raise ValueError("Symbol must be a non-empty string.")
+
     normalised = symbol.strip().upper()
-    if not SYMBOL_PATTERN.match(normalised):
+    suffix = next((quote for quote in QUOTE_SUFFIXES if normalised.endswith(quote)), None)
+    body = normalised[: -len(suffix)] if suffix else ""
+
+    if (
+        suffix is None
+        or not 2 <= len(body) <= 20
+        or not SYMBOL_BODY_PATTERN.fullmatch(body)
+        or not any(char.isalpha() for char in body)
+    ):
         raise ValueError(
             f"Invalid symbol '{normalised}'. "
-            "Expected uppercase letters ending in USDT or BUSD (e.g. BTCUSDT)."
+            "Expected an uppercase alphanumeric base asset ending in USDT or BUSD "
+            "(e.g. BTCUSDT or 1000SHIBUSDT)."
         )
     return normalised
 
 
 def validate_side(side: str) -> str:
-    """Return normalised side ('BUY' | 'SELL') or raise ValueError."""
+    """Return a normalised side ('BUY' or 'SELL') or raise ValueError."""
     if not isinstance(side, str) or not side.strip():
         raise ValueError("Side must be a non-empty string.")
     normalised = side.strip().upper()
@@ -35,29 +62,24 @@ def validate_side(side: str) -> str:
 
 
 def validate_quantity(quantity: float | str) -> float:
-    """Return validated quantity (positive float, ≤8 dp) or raise ValueError."""
-    try:
-        qty = float(quantity)
-    except (TypeError, ValueError):
-        raise ValueError(f"Quantity must be a number, got '{quantity}'.")
-    if qty <= 0:
-        raise ValueError(f"Quantity must be positive, got {qty}.")
-    # Enforce max 8 decimal places
-    rounded = round(qty, 8)
-    if abs(rounded - qty) > 1e-12:
+    """Return a validated quantity (positive finite float, max 8 dp)."""
+    qty = _parse_positive_number(quantity, "Quantity")
+
+    normalised = Decimal(str(quantity).strip())
+    if normalised.as_tuple().exponent < -8:
         raise ValueError(
             f"Quantity exceeds 8 decimal places: {quantity}. "
             "Binance rejects sub-satoshi precision."
         )
-    return rounded
+    return round(qty, 8)
 
 
 def validate_price(price: float | str | None, order_type: str) -> float | None:
     """
-    Validate price according to order type rules:
-    - MARKET: price must be None (ignored)
-    - LIMIT / STOP_LIMIT: price must be a positive number
-    Returns the validated price or None.
+    Validate price according to order-type rules.
+
+    MARKET orders ignore price. LIMIT and STOP_LIMIT orders require a positive,
+    finite number.
     """
     ot = order_type.strip().upper()
     if ot not in VALID_ORDER_TYPES:
@@ -66,21 +88,10 @@ def validate_price(price: float | str | None, order_type: str) -> float | None:
         )
 
     if ot == "MARKET":
-        if price is not None:
-            # Silently ignore, but callers should be aware
-            return None
         return None
-
-    # LIMIT or STOP_LIMIT — price is required
     if price is None:
         raise ValueError(f"Price is required for {ot} orders.")
-    try:
-        p = float(price)
-    except (TypeError, ValueError):
-        raise ValueError(f"Price must be a number, got '{price}'.")
-    if p <= 0:
-        raise ValueError(f"Price must be positive, got {p}.")
-    return p
+    return _parse_positive_number(price, "Price")
 
 
 def validate_stop_price(stop_price: float | str | None, order_type: str) -> float | None:
@@ -90,17 +101,11 @@ def validate_stop_price(stop_price: float | str | None, order_type: str) -> floa
         return None
     if stop_price is None:
         raise ValueError("stop_price is required for STOP_LIMIT orders.")
-    try:
-        sp = float(stop_price)
-    except (TypeError, ValueError):
-        raise ValueError(f"stop_price must be a number, got '{stop_price}'.")
-    if sp <= 0:
-        raise ValueError(f"stop_price must be positive, got {sp}.")
-    return sp
+    return _parse_positive_number(stop_price, "stop_price")
 
 
 def validate_order_type(order_type: str) -> str:
-    """Return normalised order type or raise ValueError."""
+    """Return a normalised order type or raise ValueError."""
     if not isinstance(order_type, str) or not order_type.strip():
         raise ValueError("order_type must be a non-empty string.")
     normalised = order_type.strip().upper()
@@ -110,3 +115,14 @@ def validate_order_type(order_type: str) -> str:
             f"Must be one of: {', '.join(sorted(VALID_ORDER_TYPES))}."
         )
     return normalised
+
+
+def validate_time_in_force(time_in_force: str | None) -> str:
+    """Return a normalised time-in-force or raise ValueError."""
+    tif = (time_in_force or "GTC").strip().upper()
+    if tif not in VALID_TIME_IN_FORCE:
+        raise ValueError(
+            f"Invalid time-in-force '{tif}'. Must be one of: "
+            f"{', '.join(sorted(VALID_TIME_IN_FORCE))}."
+        )
+    return tif

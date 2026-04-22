@@ -208,7 +208,7 @@ class TestContextManager:
             mock_http_instance = MagicMock()
             mock_http_cls.return_value = mock_http_instance
 
-            with BinanceClient() as client:
+            with BinanceClient():
                 pass
 
             mock_http_instance.close.assert_called_once()

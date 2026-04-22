@@ -72,8 +72,12 @@ source .venv/bin/activate
 ### 2. Install dependencies
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python -m pip install -e .[dev]
 ```
+
+If you prefer not to activate the virtual environment on Windows, run commands with
+`.\.venv\Scripts\python.exe` explicitly.
 
 ### 3. Configure Binance Futures Testnet credentials
 
@@ -137,6 +141,8 @@ streamlit run ui.py
 ```
 
 The UI uses the same `prepare_order_request()` and `execute_order()` workflow as the CLI, so validation and execution stay aligned. The current version presents the bot as a cinematic 3D trading deck with persistent response memory, command mirroring, and session activity tracking.
+
+The desk also exposes the same exchange-metadata preflight toggle as the CLI, so offline dry-runs and stricter Binance filter checks stay in sync.
 
 ## Logs
 

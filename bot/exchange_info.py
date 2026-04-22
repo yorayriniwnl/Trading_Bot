@@ -2,7 +2,7 @@
 Public exchange metadata helpers for Binance Futures Testnet.
 
 This module performs optional preflight validation against Binance symbol
-filters so the CLI/UI can catch common issues before sending an order.
+filters so the CLI and UI can catch common issues before sending an order.
 """
 from __future__ import annotations
 
@@ -46,6 +46,7 @@ class SymbolRules:
         lot_filter = filters.get("LOT_SIZE", {})
         market_lot_filter = filters.get("MARKET_LOT_SIZE", lot_filter)
         notional_filter = filters.get("MIN_NOTIONAL", {})
+        min_notional = notional_filter.get("notional", notional_filter.get("minNotional"))
 
         return cls(
             symbol=str(payload["symbol"]),
@@ -60,7 +61,7 @@ class SymbolRules:
             market_min_qty=_to_decimal(market_lot_filter.get("minQty")),
             market_max_qty=_to_decimal(market_lot_filter.get("maxQty")),
             market_step_size=_to_decimal(market_lot_filter.get("stepSize")),
-            min_notional=_to_decimal(notional_filter.get("notional")),
+            min_notional=_to_decimal(min_notional),
         )
 
 

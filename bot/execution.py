@@ -1,5 +1,5 @@
 """
-execution.py - Shared order preparation and execution helpers.
+Shared order preparation and execution helpers.
 
 This module keeps the CLI and the web UI on the same order-submission path.
 """
@@ -18,9 +18,8 @@ from .validators import (
     validate_side,
     validate_stop_price,
     validate_symbol,
+    validate_time_in_force,
 )
-
-VALID_TIME_IN_FORCE = {"FOK", "GTC", "IOC"}
 
 
 @dataclass(frozen=True)
@@ -33,15 +32,6 @@ class OrderRequest:
     stop_price: Optional[float] = None
     time_in_force: str = "GTC"
     dry_run: bool = False
-
-
-def _normalise_time_in_force(time_in_force: str) -> str:
-    tif = (time_in_force or "GTC").strip().upper()
-    if tif not in VALID_TIME_IN_FORCE:
-        raise ValueError(
-            f"Invalid time-in-force '{tif}'. Must be one of: {', '.join(sorted(VALID_TIME_IN_FORCE))}."
-        )
-    return tif
 
 
 def prepare_order_request(
@@ -65,7 +55,7 @@ def prepare_order_request(
         quantity=validate_quantity(quantity),
         price=validate_price(price, ot) if ot != "MARKET" else None,
         stop_price=validate_stop_price(stop_price, ot),
-        time_in_force=_normalise_time_in_force(time_in_force) if ot != "MARKET" else "GTC",
+        time_in_force=validate_time_in_force(time_in_force) if ot != "MARKET" else "GTC",
         dry_run=bool(dry_run),
     )
     if validate_exchange_metadata:

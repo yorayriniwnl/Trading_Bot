@@ -14,7 +14,6 @@ from __future__ import annotations
 from typing import Optional
 
 import typer
-from dotenv import load_dotenv
 from loguru import logger
 from rich.console import Console
 from rich.panel import Panel
@@ -22,12 +21,8 @@ from rich.table import Table
 
 from bot.execution import OrderRequest, execute_order, prepare_order_request
 from bot.exceptions import BinanceAPIError, BinanceNetworkError, BinanceTimeoutError
-from bot.logging_config import setup_logging
 from bot.orders import OrderResult
-
-# Initialise logging before anything else touches loguru
-load_dotenv()
-setup_logging()
+from bot.runtime import initialize_runtime
 
 app = typer.Typer(
     name="trading-bot",
@@ -41,6 +36,7 @@ err_console = Console(stderr=True)
 @app.callback()
 def main() -> None:
     """Binance Futures Testnet order placement CLI."""
+    initialize_runtime()
 
 
 def _print_order_request_table(request: OrderRequest) -> None:

@@ -1,8 +1,8 @@
-"""
-tests/test_validators.py — Unit tests for the validators module.
-Run with: pytest tests/ -v
-"""
+"""Unit tests for the validators module."""
+import math
+
 import pytest
+
 from bot.validators import (
     validate_order_type,
     validate_price,
@@ -10,10 +10,9 @@ from bot.validators import (
     validate_side,
     validate_stop_price,
     validate_symbol,
+    validate_time_in_force,
 )
 
-
-# ── validate_symbol ─────────────────────────────────────────────────────────
 
 class TestValidateSymbol:
     def test_valid_usdt_pair(self):
@@ -21,6 +20,9 @@ class TestValidateSymbol:
 
     def test_valid_busd_pair(self):
         assert validate_symbol("ethbusd") == "ETHBUSD"
+
+    def test_valid_symbol_with_numeric_prefix(self):
+        assert validate_symbol("1000shibusdt") == "1000SHIBUSDT"
 
     def test_strips_whitespace(self):
         assert validate_symbol("  SOLUSDT  ") == "SOLUSDT"
@@ -33,12 +35,10 @@ class TestValidateSymbol:
         with pytest.raises(ValueError):
             validate_symbol("")
 
-    def test_numeric_symbol(self):
+    def test_numeric_only_symbol_is_invalid(self):
         with pytest.raises(ValueError):
             validate_symbol("123USDT")
 
-
-# ── validate_side ───────────────────────────────────────────────────────────
 
 class TestValidateSide:
     def test_buy_lowercase(self):
@@ -55,8 +55,6 @@ class TestValidateSide:
         with pytest.raises(ValueError):
             validate_side("")
 
-
-# ── validate_quantity ───────────────────────────────────────────────────────
 
 class TestValidateQuantity:
     def test_valid_integer_quantity(self):
@@ -77,12 +75,18 @@ class TestValidateQuantity:
         with pytest.raises(ValueError, match="number"):
             validate_quantity("abc")
 
+    def test_nan_raises(self):
+        with pytest.raises(ValueError, match="finite"):
+            validate_quantity(math.nan)
+
+    def test_infinity_raises(self):
+        with pytest.raises(ValueError, match="finite"):
+            validate_quantity(math.inf)
+
     def test_too_many_decimals(self):
         with pytest.raises(ValueError, match="8 decimal places"):
-            validate_quantity(0.000000001)  # 9 dp
+            validate_quantity(0.000000001)
 
-
-# ── validate_price ──────────────────────────────────────────────────────────
 
 class TestValidatePrice:
     def test_market_ignores_price(self):
@@ -102,12 +106,14 @@ class TestValidatePrice:
         with pytest.raises(ValueError, match="positive"):
             validate_price(-1, "LIMIT")
 
+    def test_limit_nan_price(self):
+        with pytest.raises(ValueError, match="finite"):
+            validate_price(math.nan, "LIMIT")
+
     def test_invalid_order_type(self):
         with pytest.raises(ValueError, match="Unknown order type"):
             validate_price(100, "UNKNOWN")
 
-
-# ── validate_stop_price ─────────────────────────────────────────────────────
 
 class TestValidateStopPrice:
     def test_stop_limit_requires_stop_price(self):
@@ -117,17 +123,19 @@ class TestValidateStopPrice:
     def test_stop_limit_valid(self):
         assert validate_stop_price(44500.0, "STOP_LIMIT") == 44500.0
 
+    def test_stop_limit_rejects_infinite(self):
+        with pytest.raises(ValueError, match="finite"):
+            validate_stop_price(math.inf, "STOP_LIMIT")
+
     def test_non_stop_limit_returns_none(self):
         assert validate_stop_price(44500.0, "LIMIT") is None
         assert validate_stop_price(44500.0, "MARKET") is None
 
 
-# ── validate_order_type ─────────────────────────────────────────────────────
-
 class TestValidateOrderType:
     def test_valid_types(self):
-        for t in ("MARKET", "LIMIT", "STOP_LIMIT"):
-            assert validate_order_type(t) == t
+        for order_type in ("MARKET", "LIMIT", "STOP_LIMIT"):
+            assert validate_order_type(order_type) == order_type
 
     def test_lowercase_normalised(self):
         assert validate_order_type("market") == "MARKET"
@@ -135,3 +143,15 @@ class TestValidateOrderType:
     def test_invalid_type(self):
         with pytest.raises(ValueError, match="Invalid order type"):
             validate_order_type("ICEBERG")
+
+
+class TestValidateTimeInForce:
+    def test_default_value(self):
+        assert validate_time_in_force(None) == "GTC"
+
+    def test_lowercase_value_is_normalised(self):
+        assert validate_time_in_force("ioc") == "IOC"
+
+    def test_invalid_value_raises(self):
+        with pytest.raises(ValueError, match="time-in-force"):
+            validate_time_in_force("DAY")

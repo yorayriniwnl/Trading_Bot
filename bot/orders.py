@@ -1,17 +1,16 @@
 """
-orders.py — Order placement functions for Binance Futures Testnet.
+Order placement functions for Binance Futures Testnet.
 
 Each function:
-  1. Validates its inputs via validators.py
-  2. Delegates the signed HTTP request to BinanceClient
-  3. Returns a typed OrderResult dataclass
+1. Validates its inputs via validators.py
+2. Delegates the signed HTTP request to BinanceClient
+3. Returns a typed OrderResult dataclass
 
-No rich/CLI output lives here — that belongs in cli.py.
+No rich or CLI output lives here; that belongs in cli.py.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from loguru import logger
 
@@ -22,6 +21,7 @@ from .validators import (
     validate_side,
     validate_stop_price,
     validate_symbol,
+    validate_time_in_force,
 )
 
 ORDER_ENDPOINT = "/fapi/v1/order"
@@ -30,6 +30,7 @@ ORDER_ENDPOINT = "/fapi/v1/order"
 @dataclass
 class OrderResult:
     """Typed representation of a Binance order response."""
+
     orderId: str
     symbol: str
     status: str
@@ -85,6 +86,7 @@ def place_limit_order(
     sid = validate_side(side)
     qty = validate_quantity(quantity)
     prc = validate_price(price, "LIMIT")
+    tif = validate_time_in_force(time_in_force)
 
     params = {
         "symbol": sym,
@@ -92,11 +94,15 @@ def place_limit_order(
         "type": "LIMIT",
         "quantity": qty,
         "price": prc,
-        "timeInForce": time_in_force.upper(),
+        "timeInForce": tif,
     }
     logger.info(
         "Placing LIMIT order | symbol={} side={} qty={} price={} tif={}",
-        sym, sid, qty, prc, time_in_force,
+        sym,
+        sid,
+        qty,
+        prc,
+        tif,
     )
     result = OrderResult.from_response(client.post(ORDER_ENDPOINT, params))
     logger.info("LIMIT order accepted | orderId={} status={}", result.orderId, result.status)
@@ -118,23 +124,30 @@ def place_stop_limit_order(
     qty = validate_quantity(quantity)
     prc = validate_price(price, "STOP_LIMIT")
     stp = validate_stop_price(stop_price, "STOP_LIMIT")
+    tif = validate_time_in_force(time_in_force)
 
     params = {
         "symbol": sym,
         "side": sid,
-        "type": "STOP",           # Binance Futures uses "STOP" for stop-limit orders
+        "type": "STOP",  # Binance Futures uses "STOP" for stop-limit orders.
         "quantity": qty,
         "price": prc,
         "stopPrice": stp,
-        "timeInForce": time_in_force.upper(),
+        "timeInForce": tif,
     }
     logger.info(
         "Placing STOP_LIMIT order | symbol={} side={} qty={} price={} stopPrice={} tif={}",
-        sym, sid, qty, prc, stp, time_in_force,
+        sym,
+        sid,
+        qty,
+        prc,
+        stp,
+        tif,
     )
     result = OrderResult.from_response(client.post(ORDER_ENDPOINT, params))
     logger.info(
         "STOP_LIMIT order accepted | orderId={} status={}",
-        result.orderId, result.status,
+        result.orderId,
+        result.status,
     )
     return result

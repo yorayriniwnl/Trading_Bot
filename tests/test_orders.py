@@ -1,18 +1,11 @@
-"""
-tests/test_orders.py — Unit tests for order placement functions.
+"""Unit tests for order placement functions."""
+from unittest.mock import MagicMock
 
-BinanceClient is mocked — no real HTTP calls, no credentials required.
-"""
 import pytest
-from unittest.mock import MagicMock, patch
 
 from bot.exceptions import BinanceAPIError
 from bot.orders import OrderResult, place_limit_order, place_market_order, place_stop_limit_order
 
-
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
 
 MOCK_MARKET_RESPONSE = {
     "orderId": 123456789,
@@ -49,10 +42,6 @@ def mock_client():
     return client
 
 
-# ---------------------------------------------------------------------------
-# OrderResult.from_response
-# ---------------------------------------------------------------------------
-
 class TestOrderResult:
     def test_from_response_maps_all_fields(self):
         result = OrderResult.from_response(MOCK_MARKET_RESPONSE)
@@ -72,10 +61,6 @@ class TestOrderResult:
         result = OrderResult.from_response({"orderId": 999})
         assert result.orderId == "999"
 
-
-# ---------------------------------------------------------------------------
-# place_market_order
-# ---------------------------------------------------------------------------
 
 class TestPlaceMarketOrder:
     def test_returns_order_result(self, mock_client):
@@ -118,10 +103,6 @@ class TestPlaceMarketOrder:
             place_market_order(mock_client, "BTCUSDT", "BUY", 0.001)
 
 
-# ---------------------------------------------------------------------------
-# place_limit_order
-# ---------------------------------------------------------------------------
-
 class TestPlaceLimitOrder:
     def test_returns_order_result(self, mock_client):
         mock_client.post.return_value = MOCK_LIMIT_RESPONSE
@@ -144,6 +125,11 @@ class TestPlaceLimitOrder:
         _, params = mock_client.post.call_args[0]
         assert params["timeInForce"] == "GTC"
 
+    def test_invalid_tif_raises(self, mock_client):
+        with pytest.raises(ValueError, match="time-in-force"):
+            place_limit_order(mock_client, "ETHUSDT", "BUY", 0.5, 3000.0, "DAY")
+        mock_client.post.assert_not_called()
+
     def test_none_price_raises(self, mock_client):
         with pytest.raises((ValueError, TypeError)):
             place_limit_order(mock_client, "BTCUSDT", "BUY", 0.001, None)
@@ -154,10 +140,6 @@ class TestPlaceLimitOrder:
             place_limit_order(mock_client, "BTCUSDT", "BUY", 0.001, -500)
         mock_client.post.assert_not_called()
 
-
-# ---------------------------------------------------------------------------
-# place_stop_limit_order
-# ---------------------------------------------------------------------------
 
 class TestPlaceStopLimitOrder:
     def test_returns_order_result(self, mock_client):
@@ -173,6 +155,11 @@ class TestPlaceStopLimitOrder:
         assert params["price"] == 45000.0
         assert params["stopPrice"] == 44500.0
         assert params["timeInForce"] == "GTC"
+
+    def test_invalid_tif_raises(self, mock_client):
+        with pytest.raises(ValueError, match="time-in-force"):
+            place_stop_limit_order(mock_client, "BTCUSDT", "BUY", 0.001, 45000, 44500, "DAY")
+        mock_client.post.assert_not_called()
 
     def test_missing_stop_price_raises(self, mock_client):
         with pytest.raises(ValueError, match="required"):
