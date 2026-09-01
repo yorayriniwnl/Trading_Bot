@@ -98,7 +98,7 @@ class MarketSnapshot:
 
 def configure_page() -> None:
     st.set_page_config(
-        page_title="Atlas One Trading Deck",
+        page_title="YOR // Trading Bot",
         page_icon="A",
         layout="wide",
         initial_sidebar_state="collapsed",
@@ -109,8 +109,6 @@ def inject_styles() -> None:
     st.markdown(
         """
         <style>
-        @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
-
         :root {
             --void: #020810;
             --deep: #030d1c;
@@ -1381,6 +1379,183 @@ def inject_styles() -> None:
                 grid-template-columns: 1fr;
             }
         }
+        /* YOR // Visual Framework Lock */
+        :root {
+            --yor-void: #000000;
+            --yor-graphite: #050505;
+            --yor-crimson: #e84b4b;
+            --yor-deep-crimson: #671515;
+            --yor-signal: #ff8a7f;
+            --yor-warm-white: #f5eaea;
+            --yor-muted: #c4c4c4;
+            --yor-field: linear-gradient(135deg, #671515, #8c1616, #2a0505);
+            --void: var(--yor-void);
+            --deep: var(--yor-graphite);
+            --surface: rgba(5, 5, 5, 0.96);
+            --surface-soft: rgba(42, 5, 5, 0.82);
+            --panel: rgba(5, 5, 5, 0.94);
+            --panel-soft: rgba(103, 21, 21, 0.2);
+            --edge: rgba(245, 234, 234, 0.18);
+            --edge-mid: rgba(255, 138, 127, 0.34);
+            --edge-bright: rgba(255, 138, 127, 0.62);
+            --primary: var(--yor-crimson);
+            --primary-dim: rgba(232, 75, 75, 0.14);
+            --primary-glow: 0 0 24px rgba(103, 21, 21, 0.38);
+            --buy: #b7e4c7;
+            --buy-dim: rgba(183, 228, 199, 0.14);
+            --sell: var(--yor-signal);
+            --sell-dim: rgba(255, 138, 127, 0.14);
+            --gold: var(--yor-signal);
+            --gold-dim: rgba(255, 138, 127, 0.14);
+            --blue: var(--yor-signal);
+            --blue-dim: rgba(255, 138, 127, 0.14);
+            --text: var(--yor-muted);
+            --text-bright: var(--yor-warm-white);
+            --text-dim: #8b7777;
+            --sub: var(--yor-muted);
+            --font-brand: Arial, "Helvetica Neue", sans-serif;
+            --font-ui: Arial, "Helvetica Neue", sans-serif;
+            --font-mono: "Courier New", monospace;
+            --shadow: 0 34px 110px rgba(0, 0, 0, 0.62);
+            --radius-lg: 0;
+            --radius-md: 0;
+            --radius-sm: 0;
+        }
+
+        html,
+        body,
+        [data-testid="stAppViewContainer"],
+        [data-testid="stAppViewContainer"] > .main {
+            background-color: var(--yor-void);
+            background-image:
+                linear-gradient(rgba(232, 75, 75, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(232, 75, 75, 0.045) 1px, transparent 1px);
+            background-size: 32px 32px;
+            color: var(--yor-warm-white);
+        }
+
+        [data-testid="stAppViewContainer"]::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 0.5px, transparent 0.5px);
+            background-size: 5px 5px;
+            opacity: 0.08;
+            z-index: 0;
+        }
+
+        .block-container {
+            max-width: 1480px;
+            padding-top: 4.7rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .atlas-topbar,
+        .atlas-panel {
+            border-radius: 0;
+            border-color: rgba(245, 234, 234, 0.18);
+            background: linear-gradient(145deg, rgba(5, 5, 5, 0.98), rgba(42, 5, 5, 0.72));
+            box-shadow: var(--shadow);
+        }
+
+        .atlas-logo-mark::before,
+        .atlas-logo-text,
+        .panel-title,
+        .live-label,
+        .field-label,
+        .metric-label,
+        .atlas-kicker,
+        .hero-kicker {
+            color: var(--yor-signal);
+        }
+
+        .atlas-logo-mark::before {
+            background: var(--yor-field);
+            filter: drop-shadow(0 0 8px rgba(103, 21, 21, 0.75));
+        }
+
+        .atlas-logo-mark::after {
+            background: var(--yor-void);
+        }
+
+        .atlas-logo-sub,
+        .panel-sub,
+        .atlas-tick-symbol,
+        .clock-label {
+            color: var(--yor-muted);
+        }
+
+        .atlas-badge,
+        .atlas-chip {
+            border-radius: 0;
+            border-color: rgba(255, 138, 127, 0.3);
+            color: var(--yor-signal);
+            background: rgba(103, 21, 21, 0.26);
+        }
+
+        .tone-primary,
+        .tone-buy,
+        .tone-sell,
+        .tone-gold,
+        .tone-blue,
+        .tone-dim {
+            color: var(--yor-signal);
+            border-color: rgba(255, 138, 127, 0.3);
+            background: rgba(103, 21, 21, 0.26);
+        }
+
+        .stButton > button,
+        [data-testid="stFormSubmitButton"] button,
+        button[kind="primary"],
+        [data-testid="stBaseButton-primary"] {
+            border-radius: 0;
+            border: 1px solid var(--yor-crimson) !important;
+            background: var(--yor-crimson) !important;
+            color: var(--yor-void) !important;
+            box-shadow: 0 16px 40px rgba(103, 21, 21, 0.24) !important;
+        }
+
+        .stButton > button:hover,
+        [data-testid="stFormSubmitButton"] button:hover,
+        button[kind="primary"]:hover,
+        [data-testid="stBaseButton-primary"]:hover {
+            border-color: var(--yor-signal) !important;
+            background: var(--yor-signal) !important;
+            color: var(--yor-void) !important;
+        }
+
+        input,
+        textarea,
+        select,
+        [data-baseweb="select"] > div,
+        [data-testid="stNumberInput"] input {
+            border-radius: 0 !important;
+            border-color: rgba(245, 234, 234, 0.24) !important;
+            background: var(--yor-graphite) !important;
+            color: var(--yor-warm-white) !important;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--yor-signal) !important;
+            box-shadow: 0 0 0 2px rgba(232, 75, 75, 0.16) !important;
+        }
+
+        [data-testid="stHeader"] {
+            background: transparent;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -1495,7 +1670,7 @@ def synthetic_reference_price(symbol: str) -> float:
 
 
 def symbol_seed(symbol: str) -> int:
-    cleaned = symbol.strip().upper() or "ATLAS"
+    cleaned = symbol.strip().upper() or "YOR"
     return sum((index + 1) * ord(char) for index, char in enumerate(cleaned))
 
 
@@ -1713,8 +1888,8 @@ def topbar_markup(snapshot: MarketSnapshot, creds_ready_flag: bool) -> str:
         <div class="atlas-logo">
             <span class="atlas-logo-mark"></span>
             <div>
-                <div class="atlas-logo-text">ATLAS ONE</div>
-                <div class="atlas-logo-sub">QUANTUM TRADING TERMINAL</div>
+                <div class="atlas-logo-text">YOR // BOT</div>
+                <div class="atlas-logo-sub">BINANCE TESTNET ROUTE</div>
             </div>
         </div>
         <div class="atlas-ticker-wrap">
@@ -1741,7 +1916,7 @@ def render_quick_pairs() -> None:
                 <span class="atlas-badge tone-primary">Preset Launches</span>
             </div>
             <div class="quickstrip-copy">
-                The imported Atlas terminal used a guided ticket. These preset lanes keep that feel while still driving the real backend request object.
+                Guided preset lanes keep the ticket readable while still driving the real backend request object.
             </div>
         </section>
         """,
@@ -1970,7 +2145,7 @@ def render_stage_panel(
         f'<span class="spark-bar" style="height:{value:.0f}%"></span>' for value in snapshot.sparkline
     )
     hero_copy = (
-        "The imported Atlas terminal is now driving the real Streamlit desk, so the visual language, command mirror, and market intel all sit on top of the live trading workflow."
+        "The YOR command surface drives the same request preparation and execution path as the CLI, so the visual layer stays accountable to the trading workflow."
     )
     if error:
         hero_copy = f"Draft needs attention before routing: {ellipsis(error, 120)}"
@@ -1980,8 +2155,8 @@ def render_stage_panel(
         <section class="atlas-panel hero-panel">
             <div class="hero-grid">
                 <div>
-                    <div class="hero-kicker">Atlas One / Terminal Integration / Streamlit Execution Deck</div>
-                    <div class="hero-title">ATLAS ONE</div>
+                    <div class="hero-kicker">YOR / TESTNET ROUTE / STREAMLIT EXECUTION DECK</div>
+                    <div class="hero-title">YOR // BOT</div>
                     <div class="hero-copy">{escape(hero_copy)}</div>
                     <div class="atlas-chip-row">
                         {chip(snapshot.symbol, "tone-blue")}
@@ -2352,7 +2527,7 @@ def build_request_preview() -> tuple[Optional[OrderRequest], Optional[str]]:
 def handle_submission(preview_request: Optional[OrderRequest]) -> None:
     try:
         request = preview_request or prepare_order_request(**current_request_kwargs())
-        with st.spinner("Routing through Atlas One..."):
+        with st.spinner("Routing through YOR testnet path..."):
             result = execute_order(request)
 
         record_activity(request, result)
@@ -2467,7 +2642,7 @@ def main() -> None:
             st.markdown(activity_feed(st.session_state["history"]), unsafe_allow_html=True)
     except Exception as exc:
         logger.exception("Fatal UI render error")
-        st.error("Atlas One hit an unexpected rendering issue. Reload the app after checking the details below.")
+        st.error("YOR // BOT hit an unexpected rendering issue. Reload the app after checking the details below.")
         with st.expander("Technical details"):
             st.code(str(exc))
 

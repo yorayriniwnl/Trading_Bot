@@ -1,6 +1,24 @@
-# Binance Futures Testnet Trading Bot
+# YOR // Binance Futures Testnet Trading Bot
 
-Python trading bot for the Binance USDT-M Futures Testnet hiring task. The project places `MARKET` and `LIMIT` orders from a CLI, includes `STOP_LIMIT` as a bonus order type, supports both `BUY` and `SELL`, logs every request/response/error to file, and keeps the code separated into client, execution, validation, and presentation layers.
+Python trading bot for the Binance USDT-M Futures Testnet. The project places `MARKET` and `LIMIT` orders from a CLI, includes `STOP_LIMIT`, supports both `BUY` and `SELL`, logs every request/response/error to file, and keeps the code separated into client, execution, validation, and presentation layers. The optional Streamlit surface now uses the YOR visual framework: black field, graphite panels, crimson execution cues, and explicit route status.
+
+## Evidence boundary
+
+| Surface | Status | Evidence boundary |
+| --- | --- | --- |
+| CLI request preparation, validation, and dry-run execution | VERIFIED | Local tests and `--dry-run` use the shared execution path without placing an order. |
+| Binance Futures Testnet live submission | EXPERIMENTAL | Requires user-supplied testnet credentials and an independently available exchange endpoint. No live order was submitted during this pass. |
+| Streamlit trading desk | DEMO | Local UI renders synthetic market context and routes dry-run requests; provider-backed market/order state is separate. |
+| Sample logs | REPORTED | Checked-in samples are representative artifacts; they are not proof of current exchange state. |
+| Production deployment, secrets, and monitoring | UNVERIFIED | No hosted deployment or credential claim is made. |
+| Live trading hardening and operational controls | PLANNED | Add before any real-money or unattended use. |
+
+## YOR visual contract
+
+- Void `#000000`, graphite `#050505`, crimson `#e84b4b`, deep crimson `#671515`
+- Signal `#ff8a7f`, warm white `#f5eaea`, muted `#c4c4c4`
+- Field gradient `#671515 → #8c1616 → #2a0505`
+- `python scripts/check_design.py` verifies the UI contract
 
 Bonus features included:
 

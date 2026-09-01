@@ -1,0 +1,14 @@
+{
+  "name": "YOR visual framework",
+  "palette": {
+    "void": "#000000",
+    "graphite": "#050505",
+    "crimson": "#e84b4b",
+    "deepCrimson": "#671515",
+    "signal": "#ff8a7f",
+    "warmWhite": "#f5eaea",
+    "muted": "#c4c4c4"
+  },
+  "field": "linear-gradient(135deg, #671515, #8c1616, #2a0505)",
+  "states": ["VERIFIED", "REPORTED", "DEMO", "EXPERIMENTAL", "PLANNED", "UNVERIFIED"]
+}
