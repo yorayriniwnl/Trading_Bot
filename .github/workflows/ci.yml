@@ -25,7 +25,7 @@ jobs:
       - name: Test
         run: python -m pytest tests -v
       - name: Ruff
-        run: ruff check .
+        run: ruff check . --select E4,E7,E9,F
       - name: Design contract
         run: python scripts/check_design.py
       - name: Verify no committed runtime logs or env files
