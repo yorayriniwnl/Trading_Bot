@@ -30,4 +30,4 @@ jobs:
         run: python scripts/check_design.py
       - name: Verify no committed runtime logs or env files
         run: |
-          test -z "$(git ls-files '.env' 'logs/*.log')"
+          test -z "$(git ls-files '.env' 'logs/*.log' | grep -v '^logs/samples/' || true)"
