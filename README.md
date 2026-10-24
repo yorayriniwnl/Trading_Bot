@@ -12,6 +12,23 @@
 
 Python trading bot for the Binance USDT-M Futures Testnet. The project places `MARKET` and `LIMIT` orders from a CLI, includes `STOP_LIMIT`, supports both `BUY` and `SELL`, logs every request/response/error to file, and keeps the code separated into client, execution, validation, and presentation layers. The optional Streamlit surface now uses the YOR visual framework: black field, graphite panels, crimson execution cues, and explicit route status.
 
+<!-- YOR REDLINE / EXPERIENCE V2 -->
+
+<a id="system-map"></a>
+## System map
+
+<div align="center"><picture><source media="(max-width: 600px)" srcset="docs/yor-redline-system-mobile.svg"/><img src="docs/yor-redline-system.svg" width="100%" alt="Binance futures testnet: Configure testnet to Validate order to Submit or simulate to Inspect log"/></picture></div>
+
+| Project signal | Documented scope |
+| :--- | :--- |
+| **Current maturity** | TESTNET ONLY |
+| **Technical focus** | Python CLI order validation, simulated/offline execution paths, logging, and optional UI. |
+| **Evidence boundary** | Testnet orders are not evidence of real-money reliability or trading profitability. |
+
+**Navigate:** [Evidence boundary](#evidence-boundary) · [YOR visual contract](#yor-visual-contract) · [Tech Stack](#tech-stack) · [Project Structure](#project-structure) · [Features](#features) · [Setup](#setup) · [CLI Usage](#cli-usage)
+
+<!-- END YOR REDLINE / EXPERIENCE V2 -->
+
 ## Evidence boundary
 
 | Surface | Status | Evidence boundary |
