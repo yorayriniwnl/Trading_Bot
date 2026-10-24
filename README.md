@@ -1,3 +1,13 @@
+<!-- YOR REDLINE / README COVER V1 -->
+<div align="center">
+
+![Trading_Bot | YOR REDLINE](docs/yor-redline-cover.svg)
+
+<sub><strong>YOR / PROJECT DOSSIER</strong> · <a href="https://github.com/yorayriniwnl">GitHub</a> · <a href="https://yorayriniwnl.in">Portfolio</a></sub>
+
+</div>
+<!-- END YOR REDLINE -->
+
 # YOR // Binance Futures Testnet Trading Bot
 
 Python trading bot for the Binance USDT-M Futures Testnet. The project places `MARKET` and `LIMIT` orders from a CLI, includes `STOP_LIMIT`, supports both `BUY` and `SELL`, logs every request/response/error to file, and keeps the code separated into client, execution, validation, and presentation layers. The optional Streamlit surface now uses the YOR visual framework: black field, graphite panels, crimson execution cues, and explicit route status.
